@@ -15,5 +15,6 @@ abstract class RickAndMortyService {
     @Query("status") String? status,
     @Query("type") String? type,
     @Query("gender") String? gender,
+    @Query("page") int? page,
   });
 }

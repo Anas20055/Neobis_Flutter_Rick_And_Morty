@@ -4,8 +4,10 @@ class Params {
   final String? status;
   final String? type;
   final String? gender;
+  final int? page;
 
   const Params({
+    this.page,
     this.name,
     this.species,
     this.status,

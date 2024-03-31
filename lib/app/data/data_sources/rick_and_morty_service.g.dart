@@ -27,6 +27,7 @@ class _RickAndMortyService implements RickAndMortyService {
     String? status,
     String? type,
     String? gender,
+    int? page,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
@@ -35,6 +36,7 @@ class _RickAndMortyService implements RickAndMortyService {
       r'status': status,
       r'type': type,
       r'gender': gender,
+      r'page': page,
     };
     queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};

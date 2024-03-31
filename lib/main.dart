@@ -3,6 +3,8 @@ import 'package:rick_and_morty_app/app/presentation/bloc/character_bloc.dart';
 import 'package:rick_and_morty_app/app/presentation/pages/home_page.dart';
 import 'package:rick_and_morty_app/core/injection/injection_container.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import "package:rick_and_morty_app/core/constants/app_colors.dart";
+part "config/theme/theme.dart";
 
 void main() async {
   await initializeDependencies();
@@ -16,8 +18,10 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => sl<CharacterBloc>(),
-      child: const MaterialApp(
-        home: HomePage(),
+      child: MaterialApp(
+        theme: _theme(),
+        debugShowCheckedModeBanner: false,
+        home: const HomePage(),
       ),
     );
   }

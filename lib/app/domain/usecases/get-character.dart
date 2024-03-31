@@ -1,7 +1,7 @@
 import 'package:rick_and_morty_app/app/domain/entity/character.dart';
 import 'package:rick_and_morty_app/app/domain/entity/params.dart';
 import 'package:rick_and_morty_app/app/domain/repository/character_repo.dart';
-import 'package:rick_and_morty_app/core/constants/data_state.dart';
+import 'package:rick_and_morty_app/core/resourses/data_state.dart';
 import 'package:rick_and_morty_app/core/usecases/usecase.dart';
 
 class GetCharacterUseCase
@@ -16,6 +16,7 @@ class GetCharacterUseCase
         species: params?.species,
         status: params?.status,
         type: params?.type,
-        gender: params?.gender);
+        gender: params?.gender,
+        page: params?.page);
   }
 }
