@@ -1,11 +1,8 @@
-import 'package:dio/dio.dart';
-import 'package:rick_and_morty_app/core/constants/constats.dart';
-import 'package:talker_dio_logger/talker_dio_logger.dart';
-import 'package:talker_flutter/talker_flutter.dart';
+part of "injection_container.dart";
 
-Dio buildDioClient(String base) {
+Dio _buildDioClient(String base) {
   final options = BaseOptions(
-    baseUrl: Constnats.baseUrl,
+    baseUrl: base,
   );
   final dio = Dio(options);
   final talker = TalkerFlutter.init();

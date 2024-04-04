@@ -10,5 +10,5 @@ abstract class CharacterEvent extends Equatable {
 }
 
 class GetCharacters extends CharacterEvent {
-  const GetCharacters(Params params) : super(params);
+  const GetCharacters(Params super.params);
 }

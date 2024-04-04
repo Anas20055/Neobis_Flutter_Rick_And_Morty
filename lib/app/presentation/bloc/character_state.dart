@@ -8,8 +8,8 @@ abstract class CharacterState extends Equatable {
 
   @override
   List<Object> get props => [
-        characters!,
-        error!,
+        characters ?? '',
+        error ?? '',
       ];
 }
 

@@ -4,7 +4,6 @@ import 'package:rick_and_morty_app/app/domain/entity/character.dart';
 import 'package:dio/dio.dart';
 import 'package:rick_and_morty_app/app/domain/entity/params.dart';
 import 'package:rick_and_morty_app/app/domain/usecases/get-character.dart';
-import 'package:rick_and_morty_app/core/resourses/data_state.dart';
 
 part 'character_event.dart';
 part 'character_state.dart';
@@ -16,14 +15,12 @@ class CharacterBloc extends Bloc<CharacterEvent, CharacterState> {
   }
   void onGetCharacters(
       GetCharacters event, Emitter<CharacterState> emit) async {
-    final dataState = await _getCharacterUseCase.call(params: event.params);
-    if (dataState is DataSuccess && dataState.data!.results!.isNotEmpty) {
-      emit(CharacterDone(dataState.data!));
-    }
-    if (dataState is DataFailed) {
-      print("${dataState.error}");
-
-      emit(CharacterError(dataState.error!));
+    emit(const CharacterLoading());
+    try {
+      final dataState = await _getCharacterUseCase.call(params: event.params);
+      emit(CharacterDone(dataState));
+    } on DioException catch (e) {
+      emit(CharacterError(e));
     }
   }
 }

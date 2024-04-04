@@ -1,24 +1,27 @@
-enum CharacterSpecies { human, alien, empty }
+import 'package:flutter/material.dart';
+import 'package:rick_and_morty_app/core/constants/app_colors.dart';
 
-enum CharacterStatus { alive, unknown, dead, empty }
+enum Status { dead, alive, unknown }
 
-enum CharacterGender { male, female, unknown, empty }
+Status getStatusFromString(String? statusString) {
+  if (statusString == 'Dead') {
+    return Status.dead;
+  } else if (statusString == 'Alive') {
+    return Status.alive;
+  } else {
+    return Status.unknown;
+  }
+}
 
-final characterSpeciesValues = {
-  CharacterSpecies.alien: "Alien",
-  CharacterSpecies.human: "Human",
-  CharacterSpecies.empty: "",
-};
-
-final characterStatusValues = {
-  CharacterStatus.alive: "Alive",
-  CharacterStatus.dead: "Dead",
-  CharacterStatus.empty: "",
-};
-
-final characterGenderValues = {
-  CharacterGender.female: "Female",
-  CharacterGender.male: "Male",
-  CharacterGender.unknown: "unknown",
-  CharacterGender.empty: "",
-};
+Color getColorFromStatus(Status status) {
+  switch (status) {
+    case Status.dead:
+      return AppColors.red;
+    case Status.alive:
+      return AppColors.green;
+    case Status.unknown:
+      return AppColors.blue;
+    default:
+      return AppColors.blue; // Handle default case
+  }
+}

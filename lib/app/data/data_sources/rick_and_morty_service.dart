@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:rick_and_morty_app/app/data/model/character.dart';
+import 'package:rick_and_morty_app/app/data/model/episode.dart';
 import 'package:rick_and_morty_app/core/constants/constats.dart';
 
 part 'rick_and_morty_service.g.dart';
@@ -17,4 +18,7 @@ abstract class RickAndMortyService {
     @Query("gender") String? gender,
     @Query("page") int? page,
   });
+
+  @GET('/episode/1')
+  Future<HttpResponse<EpisodeModel>> getEpisode(String? url);
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:rick_and_morty_app/app/presentation/bloc/bloc/episode_bloc.dart';
 import 'package:rick_and_morty_app/app/presentation/bloc/character_bloc.dart';
-import 'package:rick_and_morty_app/app/presentation/pages/home_page.dart';
+import 'package:rick_and_morty_app/config/routes/routes.dart';
 import 'package:rick_and_morty_app/core/injection/injection_container.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import "package:rick_and_morty_app/core/constants/app_colors.dart";
@@ -16,13 +17,20 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => sl<CharacterBloc>(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => sl<CharacterBloc>(),
+        ),
+        BlocProvider(
+          create: (context) => sl<EpisodeBloc>(),
+        ),
+      ],
       child: MaterialApp(
-        theme: _theme(),
-        debugShowCheckedModeBanner: false,
-        home: const HomePage(),
-      ),
+          theme: _theme(),
+          debugShowCheckedModeBanner: false,
+          initialRoute: AppRouteNames.homePage,
+          onGenerateRoute: AppRoutes.onGenerateRoutes),
     );
   }
 }

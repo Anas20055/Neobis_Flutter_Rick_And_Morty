@@ -1,8 +1,8 @@
 import 'package:rick_and_morty_app/app/domain/entity/character.dart';
-import 'package:rick_and_morty_app/core/resourses/data_state.dart';
+import 'package:rick_and_morty_app/app/domain/entity/episode.dart';
 
 abstract class CharacterRepo {
-  Future<DataState<CharacterEntity>> getCharacters({
+  Future<CharacterEntity> getCharacters({
     String? name,
     String? species,
     String? status,
@@ -10,4 +10,6 @@ abstract class CharacterRepo {
     String? gender,
     int? page,
   });
+
+  Future<EpisodeEntity> getEpisode(String? url);
 }
