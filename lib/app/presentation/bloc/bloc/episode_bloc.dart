@@ -16,13 +16,10 @@ class EpisodeBloc extends Bloc<EpisodeEvent, EpisodeState> {
   void onGetEpisode(GetEpisode event, Emitter<EpisodeState> emit) async {
     emit(const EpisodeLoading());
     try {
-      List<EpisodeEntity> episodes = [];
-      for (String url in event.urls) {
-        final dataState =
-            await _getEpisodeUseCase.call(params: url.extractPath());
-        episodes.add(dataState);
-      }
-      emit(EpisodeDone(episodes));
+      String urls = event.urls.map((e) => e.extractPath()).join(',');
+      final dataState = await _getEpisodeUseCase.call(params: urls);
+
+      emit(EpisodeDone(dataState));
     } on DioException catch (e) {
       emit(EpisodeError(e));
     }

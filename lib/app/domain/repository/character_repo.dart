@@ -11,5 +11,5 @@ abstract class CharacterRepo {
     int? page,
   });
 
-  Future<EpisodeEntity> getEpisode(String? url);
+  Future<List<EpisodeEntity>> getEpisode(String? url);
 }

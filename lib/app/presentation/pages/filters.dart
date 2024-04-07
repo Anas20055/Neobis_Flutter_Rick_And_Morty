@@ -3,8 +3,15 @@ import 'package:flutter_svg/svg.dart';
 import 'package:rick_and_morty_app/core/constants/app_colors.dart';
 import 'package:rick_and_morty_app/core/constants/app_svg.dart';
 
-class Filters extends StatelessWidget {
+class Filters extends StatefulWidget {
   const Filters({super.key});
+
+  @override
+  State<Filters> createState() => _FiltersState();
+}
+
+class _FiltersState extends State<Filters> {
+  bool isActive = false;
 
   @override
   Widget build(BuildContext context) {
