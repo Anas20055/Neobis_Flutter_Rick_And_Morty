@@ -39,8 +39,7 @@ class ListViewItem extends StatelessWidget {
                 Text(
                   '${results?.name}',
                   style: theme.bodyLarge,
-                  maxLines: 1,
-                  overflow: TextOverflow.clip,
+                  overflow: TextOverflow.ellipsis,
                 ),
                 Text(
                   '${results?.species},${results?.gender}',

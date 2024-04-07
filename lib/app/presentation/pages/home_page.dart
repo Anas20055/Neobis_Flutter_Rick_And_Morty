@@ -79,11 +79,17 @@ class _HomePageState extends State<HomePage> {
             BlocBuilder<CharacterBloc, CharacterState>(
               builder: ((context, state) {
                 if (state is CharacterLoading) {
-                  return const Expanded(
-                    child: Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  );
+                  if (!isPagination) {
+                    return const Expanded(
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    );
+                  } else {
+                    return Expanded(
+                      child: _customGridAndListView(_currentResults),
+                    );
+                  }
                 }
                 if (state is CharacterError) {
                   return Padding(
@@ -174,7 +180,7 @@ class _HomePageState extends State<HomePage> {
               if (index < currentResults.length) {
                 return ListViewItem(
                   results: currentResults[index],
-                  onPostPressed: _onPostPressed,
+                  onPostPressed: _onCharacterPressed,
                 );
               } else {
                 return const Center(
@@ -183,22 +189,31 @@ class _HomePageState extends State<HomePage> {
               }
             })
         : GridView.builder(
+            controller: controller,
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 mainAxisSpacing: 16.0,
                 crossAxisSpacing: 16.0,
                 mainAxisExtent: 192),
             padding: const EdgeInsets.only(top: 16),
-            itemCount: currentResults.length,
+            itemCount: currentResults.length % 20 == 0
+                ? currentResults.length + 1
+                : currentResults.length,
             itemBuilder: (context, index) {
-              return GridViewItem(
-                results: currentResults[index],
-                onPostPressed: _onPostPressed,
-              );
+              if (index < currentResults.length) {
+                return GridViewItem(
+                  results: currentResults[index],
+                  onPostPressed: _onCharacterPressed,
+                );
+              } else {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
             });
   }
 
-  void _onPostPressed(ResultsEntity results) {
+  void _onCharacterPressed(ResultsEntity results) {
     Navigator.pushNamed(context, AppRouteNames.characterInfo,
         arguments: results);
   }
@@ -209,14 +224,13 @@ class _HomePageState extends State<HomePage> {
     _currentSearchString = value;
     BlocProvider.of<CharacterBloc>(context).add(
       GetCharacters(
-        Params(
-          page: _currentPage,
-          name: _currentSearchString,
-          gender: _currentFilterGender,
-          status: _currentFilterStatus,
-        ),
-        true,
-      ),
+          Params(
+            page: _currentPage,
+            name: _currentSearchString,
+            gender: _currentFilterGender,
+            status: _currentFilterStatus,
+          ),
+          true),
     );
   }
 
