@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:rick_and_morty_app/app/domain/entity/character.dart';
 import 'package:rick_and_morty_app/app/domain/entity/params.dart';
 import 'package:rick_and_morty_app/app/domain/entity/results.dart';
 import 'package:rick_and_morty_app/app/presentation/bloc/character_bloc.dart';
@@ -19,11 +20,47 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  late CharacterEntity _currentCharacter;
+  List<ResultsEntity> _currentResults = [];
+  int _currentPage = 1;
+  String _currentSearchString = '';
   bool isListView = true;
+  bool isPagination = false;
+  String _currentFilterGender = '';
+  String _currentFilterStatus = '';
+  final controller = ScrollController();
   @override
   void initState() {
-    BlocProvider.of<CharacterBloc>(context).add(const GetCharacters(Params()));
+    if (_currentResults.isEmpty) {
+      BlocProvider.of<CharacterBloc>(context).add(
+        GetCharacters(
+          Params(
+            page: _currentPage,
+          ),
+          false,
+        ),
+      );
+    }
     super.initState();
+    controller.addListener(() {
+      if (controller.position.maxScrollExtent == controller.offset) {
+        isPagination = true;
+        _currentPage++;
+        if (_currentPage <= _currentCharacter.info!.pages!) {
+          BlocProvider.of<CharacterBloc>(context).add(
+            GetCharacters(
+              Params(
+                page: _currentPage,
+                name: _currentSearchString,
+                gender: _currentFilterGender,
+                status: _currentFilterStatus,
+              ),
+              false,
+            ),
+          );
+        }
+      }
+    });
   }
 
   @override
@@ -36,6 +73,7 @@ class _HomePageState extends State<HomePage> {
           child: Column(children: [
             MyTextFiled(
               onFilterPressed: _onFilterPressed,
+              onChanged: _onChanged,
             ),
             const SizedBox(height: 16),
             BlocBuilder<CharacterBloc, CharacterState>(
@@ -68,63 +106,43 @@ class _HomePageState extends State<HomePage> {
                   );
                 }
                 if (state is CharacterDone) {
-                  return Expanded(
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Всего персонажей: ${state.characters?.info?.count}',
-                              style: theme.labelSmall,
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(right: 14),
-                              child: GestureDetector(
-                                onTap: () {
-                                  isListView = !isListView;
-                                  setState(() {});
-                                },
-                                child: SvgPicture.asset(
-                                    isListView ? AppSvg.grid : AppSvg.list),
+                  _currentCharacter = state.characters!;
+                  if (isPagination) {
+                    _currentResults.addAll(_currentCharacter.results!);
+                    isPagination = false;
+                  } else {
+                    _currentResults = _currentCharacter.results!;
+                  }
+                  return _currentResults.isNotEmpty
+                      ? Expanded(
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    'Всего персонажей: ${_currentCharacter.info?.count}',
+                                    style: theme.labelSmall,
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(right: 14),
+                                    child: GestureDetector(
+                                      onTap: _onTab,
+                                      child: SvgPicture.asset(isListView
+                                          ? AppSvg.grid
+                                          : AppSvg.list),
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ),
-                          ],
-                        ),
-                        Expanded(
-                          child: isListView
-                              ? ListView.separated(
-                                  itemCount: state.characters!.results!.length,
-                                  separatorBuilder: (context, index) {
-                                    return SizedBox();
-                                  },
-                                  itemBuilder: (context, index) {
-                                    return ListViewItem(
-                                      results:
-                                          state.characters?.results?[index],
-                                      onPostPressed: _onPostPressed,
-                                    );
-                                  })
-                              : GridView.builder(
-                                  gridDelegate:
-                                      const SliverGridDelegateWithFixedCrossAxisCount(
-                                          crossAxisCount: 2,
-                                          mainAxisSpacing: 16.0,
-                                          crossAxisSpacing: 16.0,
-                                          mainAxisExtent: 192),
-                                  padding: const EdgeInsets.only(top: 16),
-                                  itemCount: state.characters?.results?.length,
-                                  itemBuilder: (context, index) {
-                                    return GridViewItem(
-                                      results:
-                                          state.characters?.results?[index],
-                                      onPostPressed: _onPostPressed,
-                                    );
-                                  }),
-                        ),
-                      ],
-                    ),
-                  );
+                              Expanded(
+                                  child:
+                                      _customGridAndListView(_currentResults)),
+                            ],
+                          ),
+                        )
+                      : const SizedBox();
                 }
                 return const Center(
                   child: Text('something went wrong'),
@@ -137,9 +155,69 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  Widget _customGridAndListView(
+    List<ResultsEntity> currentResults,
+  ) {
+    return isListView
+        ? ListView.separated(
+            controller: controller,
+            padding: const EdgeInsets.only(top: 16),
+            itemCount: currentResults.length % 20 == 0
+                ? currentResults.length + 1
+                : currentResults.length,
+            separatorBuilder: (context, index) {
+              return const SizedBox(
+                height: 16,
+              );
+            },
+            itemBuilder: (context, index) {
+              if (index < currentResults.length) {
+                return ListViewItem(
+                  results: currentResults[index],
+                  onPostPressed: _onPostPressed,
+                );
+              } else {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+            })
+        : GridView.builder(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                mainAxisSpacing: 16.0,
+                crossAxisSpacing: 16.0,
+                mainAxisExtent: 192),
+            padding: const EdgeInsets.only(top: 16),
+            itemCount: currentResults.length,
+            itemBuilder: (context, index) {
+              return GridViewItem(
+                results: currentResults[index],
+                onPostPressed: _onPostPressed,
+              );
+            });
+  }
+
   void _onPostPressed(ResultsEntity results) {
     Navigator.pushNamed(context, AppRouteNames.characterInfo,
         arguments: results);
+  }
+
+  void _onChanged(String value) {
+    _currentPage = 1;
+    _currentResults = [];
+    _currentSearchString = value;
+    BlocProvider.of<CharacterBloc>(context).add(
+      GetCharacters(
+        Params(
+          page: _currentPage,
+          name: _currentSearchString,
+          gender: _currentFilterGender,
+          status: _currentFilterStatus,
+        ),
+        true,
+      ),
+    );
   }
 
   void _onFilterPressed() {
@@ -147,5 +225,10 @@ class _HomePageState extends State<HomePage> {
       context,
       AppRouteNames.filters,
     );
+  }
+
+  void _onTab() {
+    isListView = !isListView;
+    setState(() {});
   }
 }

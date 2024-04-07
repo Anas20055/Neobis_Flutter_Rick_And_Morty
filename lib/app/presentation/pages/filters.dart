@@ -69,177 +69,19 @@ class Filters extends StatelessWidget {
                       )
                     ],
                   ),
-                  const SizedBox(height: 29),
-                  const Divider(
-                    height: 2,
-                    color: AppColors.gradientColor,
-                  ),
-                  const SizedBox(height: 36),
-                  Text(
+                  _buidCheckList(
+                    theme,
                     'СТАТУС',
-                    style: theme.bodyMedium
-                        ?.copyWith(fontWeight: FontWeight.w500, fontSize: 10),
+                    'Живой',
+                    'Мертвый',
+                    'Неизвестно',
                   ),
-                  const SizedBox(height: 29),
-                  Row(
-                    children: [
-                      SizedBox(
-                        width: 24,
-                        height: 24,
-                        child: Checkbox(
-                          side: const BorderSide(
-                              color: AppColors.textColor, width: 2),
-                          activeColor: AppColors.blue,
-                          value: false,
-                          shape: const RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(2))),
-                          onChanged: (dfs) {},
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Text(
-                        'Живой',
-                        style: theme.bodyLarge
-                            ?.copyWith(fontWeight: FontWeight.w400),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 24),
-                  Row(
-                    children: [
-                      SizedBox(
-                        width: 24,
-                        height: 24,
-                        child: Checkbox(
-                          side: const BorderSide(
-                              color: AppColors.textColor, width: 2),
-                          activeColor: AppColors.blue,
-                          value: false,
-                          shape: const RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(2))),
-                          onChanged: (dfs) {},
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Text(
-                        'Мертвый',
-                        style: theme.bodyLarge
-                            ?.copyWith(fontWeight: FontWeight.w400),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 24),
-                  Row(
-                    children: [
-                      SizedBox(
-                        width: 24,
-                        height: 24,
-                        child: Checkbox(
-                          side: const BorderSide(
-                              color: AppColors.textColor, width: 2),
-                          activeColor: AppColors.blue,
-                          value: false,
-                          shape: const RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(2))),
-                          onChanged: (dfs) {},
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Text(
-                        'Неизвестно',
-                        style: theme.bodyLarge
-                            ?.copyWith(fontWeight: FontWeight.w400),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 29),
-                  const Divider(
-                    height: 2,
-                    color: AppColors.gradientColor,
-                  ),
-                  const SizedBox(height: 36),
-                  Text(
+                  _buidCheckList(
+                    theme,
                     'Пол',
-                    style: theme.bodyMedium
-                        ?.copyWith(fontWeight: FontWeight.w500, fontSize: 10),
-                  ),
-                  const SizedBox(height: 29),
-                  Row(
-                    children: [
-                      SizedBox(
-                        width: 24,
-                        height: 24,
-                        child: Checkbox(
-                          side: const BorderSide(
-                              color: AppColors.textColor, width: 2),
-                          activeColor: AppColors.blue,
-                          value: false,
-                          shape: const RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(2))),
-                          onChanged: (dfs) {},
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Text(
-                        'Женский',
-                        style: theme.bodyLarge
-                            ?.copyWith(fontWeight: FontWeight.w400),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 24),
-                  Row(
-                    children: [
-                      SizedBox(
-                        width: 24,
-                        height: 24,
-                        child: Checkbox(
-                          side: const BorderSide(
-                              color: AppColors.textColor, width: 2),
-                          activeColor: AppColors.blue,
-                          value: false,
-                          shape: const RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(2))),
-                          onChanged: (dfs) {},
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Text(
-                        'Мужской',
-                        style: theme.bodyLarge
-                            ?.copyWith(fontWeight: FontWeight.w400),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 24),
-                  Row(
-                    children: [
-                      SizedBox(
-                        width: 24,
-                        height: 24,
-                        child: Checkbox(
-                          side: const BorderSide(
-                              color: AppColors.textColor, width: 2),
-                          activeColor: AppColors.blue,
-                          value: false,
-                          shape: const RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(2))),
-                          onChanged: (dfs) {},
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Text(
-                        'Бесполый',
-                        style: theme.bodyLarge
-                            ?.copyWith(fontWeight: FontWeight.w400),
-                      ),
-                    ],
+                    'Мужской',
+                    'Женский',
+                    'Бесполый',
                   ),
                 ],
               ),
@@ -247,6 +89,61 @@ class Filters extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  Column _buidCheckList(
+    TextTheme theme,
+    String label,
+    String text1,
+    String text2,
+    String text3,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 29),
+        const Divider(
+          height: 2,
+          color: AppColors.gradientColor,
+        ),
+        const SizedBox(height: 36),
+        Text(
+          label,
+          style: theme.bodyMedium
+              ?.copyWith(fontWeight: FontWeight.w500, fontSize: 10),
+        ),
+        const SizedBox(height: 29),
+        _buildFilterCheck(theme, text1),
+        const SizedBox(height: 24),
+        _buildFilterCheck(theme, text2),
+        const SizedBox(height: 24),
+        _buildFilterCheck(theme, text3),
+      ],
+    );
+  }
+
+  Row _buildFilterCheck(TextTheme theme, String title) {
+    return Row(
+      children: [
+        SizedBox(
+          width: 24,
+          height: 24,
+          child: Checkbox(
+            side: const BorderSide(color: AppColors.textColor, width: 2),
+            activeColor: AppColors.blue,
+            value: false,
+            shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(2))),
+            onChanged: (dfs) {},
+          ),
+        ),
+        const SizedBox(width: 16),
+        Text(
+          title,
+          style: theme.bodyLarge?.copyWith(fontWeight: FontWeight.w400),
+        ),
+      ],
     );
   }
 }

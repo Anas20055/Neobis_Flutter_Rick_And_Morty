@@ -2,7 +2,8 @@ part of 'character_bloc.dart';
 
 abstract class CharacterEvent extends Equatable {
   final Params? params;
-  const CharacterEvent(this.params);
+  final bool isSearch;
+  const CharacterEvent(this.params, this.isSearch);
 
   @override
   // TODO: implement props
@@ -10,5 +11,5 @@ abstract class CharacterEvent extends Equatable {
 }
 
 class GetCharacters extends CharacterEvent {
-  const GetCharacters(Params super.params);
+  const GetCharacters(Params super.params, super.isSearch);
 }

@@ -1,43 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:rick_and_morty_app/app/domain/entity/params.dart';
-import 'package:rick_and_morty_app/app/presentation/bloc/character_bloc.dart';
 import 'package:rick_and_morty_app/core/constants/app_colors.dart';
 import 'package:rick_and_morty_app/core/constants/app_svg.dart';
 
-class MyTextFiled extends StatefulWidget {
+class MyTextFiled extends StatelessWidget {
   final void Function()? onFilterPressed;
-  const MyTextFiled({super.key, this.onFilterPressed});
-
-  @override
-  State<MyTextFiled> createState() => _MyTextFiledState();
-}
-
-class _MyTextFiledState extends State<MyTextFiled> {
-  final controller = TextEditingController();
-  @override
-  void initState() {
-    controller.addListener(() {
-      final text = controller.text;
-      BlocProvider.of<CharacterBloc>(context)
-          .add(GetCharacters(Params(name: text)));
-    });
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    controller.dispose();
-    super.dispose();
-  }
+  final void Function(String)? onChanged;
+  const MyTextFiled({super.key, this.onFilterPressed, this.onChanged});
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
-      controller: controller,
-      onChanged: (value) => (),
+    return TextField(
+      onChanged: onChanged,
       decoration: InputDecoration(
           contentPadding:
               const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
@@ -76,5 +50,5 @@ class _MyTextFiledState extends State<MyTextFiled> {
     );
   }
 
-  void _onTap() => widget.onFilterPressed?.call();
+  void _onTap() => onFilterPressed?.call();
 }

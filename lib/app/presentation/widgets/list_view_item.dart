@@ -15,42 +15,41 @@ class ListViewItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context).textTheme;
-    return Padding(
-      padding: const EdgeInsets.only(top: 16),
-      child: GestureDetector(
-        onTap: _onTap,
-        child: Row(
-          children: [
-            CircleAvatar(
-              radius: 37,
-              backgroundImage: CachedNetworkImageProvider(
-                "${results?.image}",
-              ),
+    return GestureDetector(
+      onTap: _onTap,
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 37,
+            backgroundImage: CachedNetworkImageProvider(
+              "${results?.image}",
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '${results?.status}',
-                    style: theme.bodySmall?.copyWith(
-                        color: getColorFromStatus(
-                            getStatusFromString(results?.status))),
-                  ),
-                  Text(
-                    '${results?.name}',
-                    style: theme.bodyLarge,
-                  ),
-                  Text(
-                    '${results?.species},${results?.gender}',
-                    style: theme.bodyMedium,
-                  ),
-                ],
-              ),
-            )
-          ],
-        ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '${results?.status}',
+                  style: theme.bodySmall?.copyWith(
+                      color: getColorFromStatus(
+                          getStatusFromString(results?.status))),
+                ),
+                Text(
+                  '${results?.name}',
+                  style: theme.bodyLarge,
+                  maxLines: 1,
+                  overflow: TextOverflow.clip,
+                ),
+                Text(
+                  '${results?.species},${results?.gender}',
+                  style: theme.bodyMedium,
+                ),
+              ],
+            ),
+          )
+        ],
       ),
     );
   }

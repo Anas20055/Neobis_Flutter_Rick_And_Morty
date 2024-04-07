@@ -15,8 +15,10 @@ class CharacterBloc extends Bloc<CharacterEvent, CharacterState> {
   }
   void onGetCharacters(
       GetCharacters event, Emitter<CharacterState> emit) async {
-    emit(const CharacterLoading());
     try {
+      if (event.isSearch) {
+        emit(const CharacterLoading());
+      }
       final dataState = await _getCharacterUseCase.call(params: event.params);
       emit(CharacterDone(dataState));
     } on DioException catch (e) {
