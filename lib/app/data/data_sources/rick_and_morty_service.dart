@@ -19,6 +19,9 @@ abstract class RickAndMortyService {
     @Query("page") int? page,
   });
 
-  @GET('/episode/1')
-  Future<HttpResponse<List<EpisodeModel>>> getEpisode(String? url);
+  @GET('/episode')
+  Future<HttpResponse<List<EpisodeModel>>> getEpisodes(String? url);
+
+  @GET('/episode')
+  Future<HttpResponse<EpisodeModel>> getEpisode(String? url);
 }

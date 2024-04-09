@@ -31,105 +31,106 @@ class _CharacterInfoState extends State<CharacterInfo> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context).textTheme;
     return Scaffold(
-      body: Stack(
-        children: [
-          Column(
-            children: [
-              Container(
-                height: 218,
-                width: MediaQuery.sizeOf(context).width,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                      image: CachedNetworkImageProvider(widget.results.image!),
-                      fit: BoxFit.cover),
+      body: SingleChildScrollView(
+        child: Stack(
+          children: [
+            Column(
+              children: [
+                Container(
+                  height: 218,
+                  width: MediaQuery.sizeOf(context).width,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                        image:
+                            CachedNetworkImageProvider(widget.results.image!),
+                        fit: BoxFit.cover),
+                  ),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                    child: SizedBox(
+                        width: MediaQuery.sizeOf(context).width,
+                        height: 218,
+                        child: const ColoredBox(color: AppColors.blueTrans)),
+                  ),
                 ),
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                  child: SizedBox(
-                      width: MediaQuery.sizeOf(context).width,
-                      height: 218,
-                      child: const ColoredBox(color: AppColors.blueTrans)),
+                const SizedBox(
+                  height: 89,
                 ),
-              ),
-              const SizedBox(
-                height: 89,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      widget.results.name!,
-                      style: const TextStyle(
-                        fontSize: 34,
-                        color: Colors.white,
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        widget.results.name!,
+                        style: const TextStyle(
+                          fontSize: 34,
+                          color: Colors.white,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      widget.results.status!,
-                      style: theme.bodySmall?.copyWith(
-                          color: getColorFromStatus(
-                              getStatusFromString(widget.results.status))),
-                    ),
-                    const SizedBox(height: 30),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _buildIformation(
-                            'Пол',
-                            widget.results.gender!,
+                      const SizedBox(height: 4),
+                      Text(
+                        widget.results.status!,
+                        style: theme.bodySmall?.copyWith(
+                            color: getStatusFromString(widget.results.status)
+                                .getColorFromStatus),
+                      ),
+                      const SizedBox(height: 30),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _buildIformation(
+                              'Пол',
+                              widget.results.gender!,
+                            ),
                           ),
-                        ),
-                        const SizedBox(
-                          width: 8,
-                        ),
-                        Expanded(
-                          child: _buildIformation(
-                            'Расса',
-                            widget.results.species!,
+                          const SizedBox(
+                            width: 8,
                           ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    _buildIformation(
-                      'Место рождения',
-                      widget.results.origin!.name!,
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    _buildIformation(
-                      'Местоположение',
-                      widget.results.location!.name!,
-                    ),
-                  ],
+                          Expanded(
+                            child: _buildIformation(
+                              'Расса',
+                              widget.results.species!,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      _buildIformation(
+                        'Место рождения',
+                        widget.results.origin!.name!,
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      _buildIformation(
+                        'Местоположение',
+                        widget.results.location!.name!,
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(height: 35),
-              const Divider(
-                color: AppColors.gradientColor,
-                height: 2,
-              ),
-              const SizedBox(height: 35),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Row(
-                  children: [
-                    Text(
-                      'Эпизоды',
-                      style: Theme.of(context).textTheme.headlineLarge,
-                    )
-                  ],
+                const SizedBox(height: 35),
+                const Divider(
+                  color: AppColors.gradientColor,
+                  height: 2,
                 ),
-              ),
-              Expanded(
-                child: BlocBuilder<EpisodeBloc, EpisodeState>(
+                const SizedBox(height: 35),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Row(
+                    children: [
+                      Text(
+                        'Эпизоды',
+                        style: Theme.of(context).textTheme.headlineLarge,
+                      )
+                    ],
+                  ),
+                ),
+                BlocBuilder<EpisodeBloc, EpisodeState>(
                     builder: (context, state) {
                   if (state is EpisodeLoading) {
                     return const Center(
@@ -143,6 +144,7 @@ class _CharacterInfoState extends State<CharacterInfo> {
                   }
                   if (state is EpisodeDone) {
                     return ListView.separated(
+                      physics: const NeverScrollableScrollPhysics(),
                       padding: const EdgeInsets.only(top: 24),
                       shrinkWrap: true,
                       itemCount: widget.results.episode!.length,
@@ -168,47 +170,47 @@ class _CharacterInfoState extends State<CharacterInfo> {
                   }
                   return const SizedBox();
                 }),
-              ),
-            ],
-          ),
-          Column(
-            children: [
-              const SizedBox(height: 218),
-              Container(
-                height: 10,
-                color: AppColors.background,
-              )
-            ],
-          ),
-          SizedBox(
-            width: MediaQuery.sizeOf(context).width,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const SizedBox(
-                  height: 129,
-                ),
-                CircleAvatar(
-                  radius: 81,
-                  backgroundColor: AppColors.background,
-                  child: CircleAvatar(
-                    radius: 73,
-                    backgroundImage:
-                        CachedNetworkImageProvider(widget.results.image!),
-                  ),
-                ),
               ],
             ),
-          ),
-          Positioned(
-              top: 61,
-              left: 16,
-              child: IconButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  icon: SvgPicture.asset(AppSvg.back))),
-        ],
+            Column(
+              children: [
+                const SizedBox(height: 218),
+                Container(
+                  height: 10,
+                  color: AppColors.background,
+                )
+              ],
+            ),
+            SizedBox(
+              width: MediaQuery.sizeOf(context).width,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const SizedBox(
+                    height: 129,
+                  ),
+                  CircleAvatar(
+                    radius: 81,
+                    backgroundColor: AppColors.background,
+                    child: CircleAvatar(
+                      radius: 73,
+                      backgroundImage:
+                          CachedNetworkImageProvider(widget.results.image!),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Positioned(
+                top: 61,
+                left: 16,
+                child: IconButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    icon: SvgPicture.asset(AppSvg.back))),
+          ],
+        ),
       ),
     );
   }

@@ -29,7 +29,12 @@ class CharacterRepoImpl implements CharacterRepo {
 
   @override
   Future<List<EpisodeModel>> getEpisode(String? url) async {
-    final httpResponse = await _rickAndMortyService.getEpisode(url);
-    return httpResponse.data;
+    if (url!.contains(',')) {
+      final httpResponse = await _rickAndMortyService.getEpisodes(url);
+      return httpResponse.data;
+    } else {
+      final httpResponse = await _rickAndMortyService.getEpisode(url);
+      return [httpResponse.data];
+    }
   }
 }

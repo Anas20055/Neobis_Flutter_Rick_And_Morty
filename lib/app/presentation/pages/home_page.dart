@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:rick_and_morty_app/app/domain/entity/character.dart';
+import 'package:rick_and_morty_app/app/domain/entity/enums.dart';
+import 'package:rick_and_morty_app/app/domain/entity/filter_result.dart';
 import 'package:rick_and_morty_app/app/domain/entity/params.dart';
 import 'package:rick_and_morty_app/app/domain/entity/results.dart';
 import 'package:rick_and_morty_app/app/presentation/bloc/character_bloc.dart';
@@ -79,17 +81,11 @@ class _HomePageState extends State<HomePage> {
             BlocBuilder<CharacterBloc, CharacterState>(
               builder: ((context, state) {
                 if (state is CharacterLoading) {
-                  if (!isPagination) {
-                    return const Expanded(
-                      child: Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                    );
-                  } else {
-                    return Expanded(
-                      child: _customGridAndListView(_currentResults),
-                    );
-                  }
+                  return const Expanded(
+                    child: Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  );
                 }
                 if (state is CharacterError) {
                   return Padding(
@@ -116,6 +112,9 @@ class _HomePageState extends State<HomePage> {
                   if (isPagination) {
                     _currentResults.addAll(_currentCharacter.results!);
                     isPagination = false;
+                  }
+                  if (isListView || !isListView) {
+                    _currentResults.addAll(_currentCharacter.results!);
                   } else {
                     _currentResults = _currentCharacter.results!;
                   }
@@ -142,9 +141,7 @@ class _HomePageState extends State<HomePage> {
                                   ),
                                 ],
                               ),
-                              Expanded(
-                                  child:
-                                      _customGridAndListView(_currentResults)),
+                              Expanded(child: _customGridAndListView()),
                             ],
                           ),
                         )
@@ -161,25 +158,23 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _customGridAndListView(
-    List<ResultsEntity> currentResults,
-  ) {
+  Widget _customGridAndListView() {
     return isListView
         ? ListView.separated(
             controller: controller,
             padding: const EdgeInsets.only(top: 16),
-            itemCount: currentResults.length % 20 == 0
-                ? currentResults.length + 1
-                : currentResults.length,
+            itemCount: _currentResults.length % 20 == 0
+                ? _currentResults.length + 1
+                : _currentResults.length,
             separatorBuilder: (context, index) {
               return const SizedBox(
                 height: 16,
               );
             },
             itemBuilder: (context, index) {
-              if (index < currentResults.length) {
+              if (index < _currentResults.length) {
                 return ListViewItem(
-                  results: currentResults[index],
+                  results: _currentResults[index],
                   onPostPressed: _onCharacterPressed,
                 );
               } else {
@@ -196,13 +191,13 @@ class _HomePageState extends State<HomePage> {
                 crossAxisSpacing: 16.0,
                 mainAxisExtent: 192),
             padding: const EdgeInsets.only(top: 16),
-            itemCount: currentResults.length % 20 == 0
-                ? currentResults.length + 1
-                : currentResults.length,
+            itemCount: _currentResults.length % 20 == 0
+                ? _currentResults.length + 1
+                : _currentResults.length,
             itemBuilder: (context, index) {
-              if (index < currentResults.length) {
+              if (index < _currentResults.length) {
                 return GridViewItem(
-                  results: currentResults[index],
+                  results: _currentResults[index],
                   onPostPressed: _onCharacterPressed,
                 );
               } else {
@@ -234,11 +229,31 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void _onFilterPressed() {
-    Navigator.pushNamed(
+  void _onFilterPressed() async {
+    final result = await Navigator.pushNamed(
       context,
       AppRouteNames.filters,
     );
+
+    // Handle the result if it's not null and is of type FilterResult
+    if (result != null && result is FilterResult) {
+      _currentFilterStatus = result.filterStatus.getString;
+      _currentFilterGender = result.filterGender.getString;
+      // Reset page and results list before fetching new data
+      _currentPage = 1;
+      _currentResults = [];
+      BlocProvider.of<CharacterBloc>(context).add(
+        GetCharacters(
+          Params(
+            page: _currentPage,
+            name: _currentSearchString,
+            gender: _currentFilterGender,
+            status: _currentFilterStatus,
+          ),
+          true,
+        ),
+      );
+    }
   }
 
   void _onTab() {

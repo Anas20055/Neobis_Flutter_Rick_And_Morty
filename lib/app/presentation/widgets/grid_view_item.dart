@@ -28,8 +28,7 @@ class GridViewItem extends StatelessWidget {
           Text(
             '${results?.status}',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color:
-                    getColorFromStatus(getStatusFromString(results?.status))),
+                color: getStatusFromString(results?.status).getColorFromStatus),
           ),
           Text(
             '${results?.name}',
@@ -40,6 +39,8 @@ class GridViewItem extends StatelessWidget {
           ),
           Text(
             '${results?.species},${results?.gender}',
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
             style: Theme.of(context).textTheme.bodyMedium,
           ),
         ],

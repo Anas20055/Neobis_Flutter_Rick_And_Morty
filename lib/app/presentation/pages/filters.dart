@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:rick_and_morty_app/app/domain/entity/enums.dart';
+import 'package:rick_and_morty_app/app/domain/entity/filter_result.dart';
 import 'package:rick_and_morty_app/core/constants/app_colors.dart';
 import 'package:rick_and_morty_app/core/constants/app_svg.dart';
 
@@ -12,6 +14,8 @@ class Filters extends StatefulWidget {
 
 class _FiltersState extends State<Filters> {
   bool isActive = false;
+  Status filterStatus = Status.empty;
+  Gender filterGender = Gender.empty;
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +34,15 @@ class _FiltersState extends State<Filters> {
                     children: [
                       GestureDetector(
                         onTap: () {
-                          Navigator.pop(context);
+                          if (isActive) {
+                            final result = FilterResult(
+                                filterStatus: filterStatus,
+                                filterGender: filterGender);
+
+                            Navigator.pop(context, result);
+                          } else {
+                            Navigator.pop(context);
+                          }
                         },
                         child: SvgPicture.asset(AppSvg.back),
                       ),
@@ -41,10 +53,18 @@ class _FiltersState extends State<Filters> {
                       ),
                     ],
                   ),
-                  GestureDetector(
-                    onTap: () {},
-                    child: SvgPicture.asset(AppSvg.filterCancel),
-                  ),
+                  isActive
+                      ? GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              filterGender = Gender.empty;
+                              filterStatus = Status.empty;
+                              isActive = false;
+                            });
+                          },
+                          child: SvgPicture.asset(AppSvg.filterCancel),
+                        )
+                      : const SizedBox(),
                 ],
               ),
             ),
@@ -79,16 +99,16 @@ class _FiltersState extends State<Filters> {
                   _buidCheckList(
                     theme,
                     'СТАТУС',
-                    'Живой',
-                    'Мертвый',
-                    'Неизвестно',
+                    Status.alive,
+                    Status.dead,
+                    Status.unknown,
                   ),
                   _buidCheckList(
                     theme,
                     'Пол',
-                    'Мужской',
-                    'Женский',
-                    'Бесполый',
+                    Gender.male,
+                    Gender.female,
+                    Gender.genderless,
                   ),
                 ],
               ),
@@ -102,9 +122,9 @@ class _FiltersState extends State<Filters> {
   Column _buidCheckList(
     TextTheme theme,
     String label,
-    String text1,
-    String text2,
-    String text3,
+    Enum option1,
+    Enum option2,
+    Enum option3,
   ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -121,36 +141,73 @@ class _FiltersState extends State<Filters> {
               ?.copyWith(fontWeight: FontWeight.w500, fontSize: 10),
         ),
         const SizedBox(height: 29),
-        _buildFilterCheck(theme, text1),
+        _buildFilterCheck(
+          theme,
+          option1,
+        ),
         const SizedBox(height: 24),
-        _buildFilterCheck(theme, text2),
+        _buildFilterCheck(
+          theme,
+          option2,
+        ),
         const SizedBox(height: 24),
-        _buildFilterCheck(theme, text3),
+        _buildFilterCheck(
+          theme,
+          option3,
+        ),
       ],
     );
   }
 
-  Row _buildFilterCheck(TextTheme theme, String title) {
+  Row _buildFilterCheck(TextTheme theme, Enum value) {
     return Row(
       children: [
         SizedBox(
           width: 24,
           height: 24,
           child: Checkbox(
-            side: const BorderSide(color: AppColors.textColor, width: 2),
-            activeColor: AppColors.blue,
-            value: false,
-            shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(2))),
-            onChanged: (dfs) {},
-          ),
+              side: const BorderSide(color: AppColors.textColor, width: 2),
+              activeColor: AppColors.blue,
+              value: isFilterActive(value),
+              shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(2))),
+              onChanged: (checked) {
+                if (checked!) {
+                  setState(() {
+                    if (value is Status) {
+                      filterStatus = value;
+                    } else if (value is Gender) {
+                      filterGender = value;
+                    }
+                    isActive = true;
+                  });
+                }
+              }),
         ),
         const SizedBox(width: 16),
         Text(
-          title,
+          isFilterText(value),
           style: theme.bodyLarge?.copyWith(fontWeight: FontWeight.w400),
         ),
       ],
     );
+  }
+
+  bool isFilterActive(Enum value) {
+    if (value is Status) {
+      return filterStatus == value;
+    } else if (value is Gender) {
+      return filterGender == value;
+    }
+    return false;
+  }
+
+  String isFilterText(Enum value) {
+    if (value is Status) {
+      return value.getStringRu;
+    } else if (value is Gender) {
+      return value.getStringRu;
+    }
+    return '';
   }
 }

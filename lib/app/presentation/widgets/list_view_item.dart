@@ -33,13 +33,16 @@ class ListViewItem extends StatelessWidget {
                 Text(
                   '${results?.status}',
                   style: theme.bodySmall?.copyWith(
-                      color: getColorFromStatus(
-                          getStatusFromString(results?.status))),
+                      color: getStatusFromString(results?.status)
+                          .getColorFromStatus),
                 ),
-                Text(
-                  '${results?.name}',
-                  style: theme.bodyLarge,
-                  overflow: TextOverflow.ellipsis,
+                SizedBox(
+                  width: 250,
+                  child: Text(
+                    '${results?.name}',
+                    style: theme.bodyLarge,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
                 Text(
                   '${results?.species},${results?.gender}',
